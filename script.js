@@ -24,30 +24,34 @@ form.addEventListener('submit', (e) => {
     })
 
 const hour = (data,timezone) => {
+    const newDate = new Date((data.dt - 7200 + timezone) * 1000);
+    const date = `${newDate.getDay() + 1}.${newDate.getMonth() + 1}.${newDate.getFullYear()}`;
     const time = `${new Date((data.dt - 7200 + timezone) * 1000).getHours()}:00`;
-    this.temp = data.main.temp;
-    this.feelsLike = data.main.feels_like;
-    this.rain = data.rain === undefined ? 0 : data.rain['3h'];
-    this.pop = data.pop;
-    this.cloudiness = data.clouds.all;
-    this.windSpeed = data.wind.speed;
-    this.windGust = data.wind.gust;
-    return {time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust};
+    const temp = data.main.temp;
+    const feelsLike = data.main.feels_like;
+    const rain = data.rain === undefined ? 0 : data.rain['3h'];
+    const pop = data.pop;
+    const cloudiness = data.clouds.all;
+    const windSpeed = data.wind.speed;
+    const windGust = data.wind.gust;
+    return {date,time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust};
 }
 
 const day = (data) => {
     const hourlyInfo = [];
+
+    //get full date for sunrise and sunset
     this.sunrise = new Date((data.city.sunrise - 7200 + data.city.timezone) * 1000);
-    this.sunrise = `${this.sunrise.getHours() > 10 ? this.sunrise.getHours() : '0' +this.sunrise.getHours()}:${this.sunrise.getMinutes() > 10 ? this.sunrise.getMinutes() : '0' + this.sunrise.getMinutes()}`;
     this.sunset = new Date((data.city.sunset - 7200 + data.city.timezone) * 1000);
+
+    //extract the usefull information
+    this.sunrise = `${this.sunrise.getHours() > 10 ? this.sunrise.getHours() : '0' +this.sunrise.getHours()}:${this.sunrise.getMinutes() > 10 ? this.sunrise.getMinutes() : '0' + this.sunrise.getMinutes()}`;
     this.sunset = `${this.sunset.getHours() > 10 ? this.sunset.getHours() : '0' +this.sunset.getHours()}:${this.sunset.getMinutes() > 10 ? this.sunset.getMinutes() : '0' + this.sunset.getMinutes()}`;
+
     const addHourInfo = (hour) => {
         hourlyInfo.push(hour);
     }
-    const getInfo = () => {
-        return {hourlyInfo,sunrise,sunset};
-    }
-    return {addHourInfo,getInfo,hourlyInfo,sunrise,sunset};
+    return {addHourInfo,hourlyInfo,sunrise,sunset};
 }
 
 const useData = (data) => {
@@ -85,7 +89,7 @@ const displayData = (days) => {
 
         const dayLabel = document.createElement("div");
         dayLabel.classList.add("day-label");
-        dayLabel.textContent = `Day ${day.index + 1}`;
+        dayLabel.textContent = day.hourlyInfo[0].date;
         
         const dayInfo = document.createElement("div");
         dayInfo.classList.add("day-info");
@@ -105,36 +109,36 @@ const displayData = (days) => {
         const headerRow = document.createElement("tr");
         headerRow.innerHTML = `<th></th>`;
         for (const hour of day.hourlyInfo) {
-        const hourCell = document.createElement("th");
-        hourCell.textContent = hour.time;
-        headerRow.appendChild(hourCell);
+            const hourCell = document.createElement("th");
+            hourCell.textContent = hour.time;
+            headerRow.appendChild(hourCell);
         }
         table.appendChild(headerRow);
 
         const tempRow = document.createElement("tr");
         tempRow.innerHTML = `<th>Temperature</th>`;
         for (const hour of day.hourlyInfo) {
-        const tempCell = document.createElement("td");
-        tempCell.textContent = hour.temp;
-        tempRow.appendChild(tempCell);
+            const tempCell = document.createElement("td");
+            tempCell.textContent = `${Math.round(hour.temp)}°C`;
+            tempRow.appendChild(tempCell);
         }
         table.appendChild(tempRow);
 
         const feelsLikeRow = document.createElement("tr");
         feelsLikeRow.innerHTML = `<th>Feels like</th>`;
         for (const hour of day.hourlyInfo) {
-        const feelsLikeCell = document.createElement("td");
-        feelsLikeCell.textContent = hour.feelsLike;
-        feelsLikeRow.appendChild(feelsLikeCell);
+            const feelsLikeCell = document.createElement("td");
+            feelsLikeCell.textContent = `${Math.round(hour.feelsLike)}°C`;
+            feelsLikeRow.appendChild(feelsLikeCell);
         }
         table.appendChild(feelsLikeRow);
 
         const rainRow = document.createElement("tr");
         rainRow.innerHTML = `<th>Rain</th>`;
         for (const hour of day.hourlyInfo) {
-        const rainCell = document.createElement("td");
-        rainCell.textContent = hour.rain;
-        rainRow.appendChild(rainCell);
+            const rainCell = document.createElement("td");
+            rainCell.textContent = `${hour.rain} mm`;
+            rainRow.appendChild(rainCell);
         }
         table.appendChild(rainRow);
 
@@ -142,7 +146,7 @@ const displayData = (days) => {
         popRow.innerHTML = `<th>Chance of rain</th>`;
         for (const hour of day.hourlyInfo) {
             const popCell = document.createElement("td");
-            popCell.textContent = hour.pop;
+            popCell.textContent = `${Math.round(hour.pop*100)}%`;
             popRow.appendChild(popCell);
         }
         table.appendChild(popRow);
@@ -151,7 +155,7 @@ const displayData = (days) => {
         cloudinessRow.innerHTML = `<th>Cloudiness</th>`;
         for (const hour of day.hourlyInfo) {
             const cloudinessCell = document.createElement("td");
-            cloudinessCell.textContent = hour.cloudiness;
+            cloudinessCell.textContent = `${hour.cloudiness}%`;
             cloudinessRow.appendChild(cloudinessCell);
         }
         table.appendChild(cloudinessRow);
@@ -160,7 +164,7 @@ const displayData = (days) => {
         windSpeedRow.innerHTML = `<th>Wind speed</th>`;
         for (const hour of day.hourlyInfo) {
             const windSpeedCell = document.createElement("td");
-            windSpeedCell.textContent = hour.windSpeed;
+            windSpeedCell.textContent = `${Math.round(hour.windSpeed*3.6)}%`;
             windSpeedRow.appendChild(windSpeedCell);
         }
         table.appendChild(windSpeedRow);
@@ -169,7 +173,7 @@ const displayData = (days) => {
         windGustRow.innerHTML = `<th>Wind gust</th>`;
         for (const hour of day.hourlyInfo) {
             const windGustCell = document.createElement("td");
-            windGustCell.textContent = hour.windGust;
+            windGustCell.textContent = `${Math.round(hour.windGust*3.6)}%`;
             windGustRow.appendChild(windGustCell);
         }
         table.appendChild(windGustRow);
