@@ -2,13 +2,13 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #ccc;
 }
 
 #container {
   font-family: sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: left;
 }
 
 .day-container {
@@ -29,7 +29,7 @@ body{
 
 .sunrise-label,
 .sunset-label {
-  font-size: 14px;
+  font-size: 1.2rem;
   margin-bottom: 10px;
 }
 
@@ -41,17 +41,19 @@ body{
 
 .hourly-table th,
 .hourly-table td {
-  border: 1px solid #ccc;
-  padding: 5px 10px;
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid #111;
+}
+
+
+.hourly-table th {
+  background-color: #999;
+  font-size: 1.2rem;
+  font-weight: bold;
   text-align: left;
 }
 
-.hourly-table th {
-  background-color: #eee;
-  font-size: 14px;
-  font-weight: bold;
-}
-
 .hourly-table td {
-  font-size: 14px;
+  font-size: 1.2rem;
 }
