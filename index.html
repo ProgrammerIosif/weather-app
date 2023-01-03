@@ -9,11 +9,26 @@
     <script src="script.js" defer></script>
 </head>
 <body> 
-    <h1>Weather</h1> 
-    
+        <!-- <p>Language</p>
+        <input type="radio" name="language" id="en">
+        <label for="en">English</label>
+        <br>
+        <input type="radio" name="language" id="ro">
+        <label for="ro">Română</label> -->
     <form>
-        <p>Choose city</p>
+        <h1>Weather</h1>
+        <p>Temperature in:</p>
+        <div>
+        <input type="radio" name="units" id="celcius">
+        <label for="celcius">Celcius</label>
+        </div>
+        <div>
+            <input type="radio" name="units" id="fahrenheit">
+            <label for="fahrenheit">Fahrenheit</label>
+        </div>
+        <label for="cityName">Choose city or country</label>
         <input type="text" name="cityName" id="cityName" required>
+        <span id="error-message"></span>
         <input type="submit" value="Enter">
     </form>
     <div id="container">

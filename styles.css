@@ -3,10 +3,17 @@ body{
     flex-direction: column;
     align-items: center;
     background-color: #ccc;
+    font-family: sans-serif;
+    height: 100vh;
+    margin: 0;
+}
+
+h1{
+    text-align: center;
+    font-size: 2.2rem;
 }
 
 #container {
-  font-family: sans-serif;
   display: flex;
   flex-direction: column;
 }
@@ -56,4 +63,82 @@ body{
 
 .hourly-table td {
   font-size: 1.2rem;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+  float: left;
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  border-radius: 50%;
+  height: 60px;
+  width: 60px;
+  border: none;
+  font-size: 2rem;
+}
+button:hover{
+    cursor: pointer;
+    background-color: #777;
+    color: white;
+    border: 1px solid black;
+}
+form {
+  height: 40vh;
+  margin: 25vh 0 35vh 0;
+  display: flex;
+  padding: 50px;
+  flex-direction: column;
+  background-color: #bbb;
+  box-shadow: 10px 10px 10px #555;
+  border-radius: 5px;
+  font-size: 1.2rem;
+}
+form *{
+    margin: 5px 0;
+    padding: 0;
+}
+
+form h1 {
+  margin-bottom: 10px;
+}
+
+form p {
+  font-size: 1.2em;
+}
+
+form input[type="text"] {
+  width: 92%;
+  height: 35px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  padding: 3px 10px;
+  font-size: 1em;
+}
+
+form input[type="submit"] {
+  border: none;
+  border-radius: 10px;
+  background-color: #888;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  padding: 10px 0;
+  display: flex;
+}
+
+form input[type="submit"]:hover {
+  background-color: #999;
+  color: black;
+}
+
+form input[type="radio"] {
+  margin: 0 10px;
+}
+
+form label {
+  font-size: 1em;
 }

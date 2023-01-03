@@ -18,18 +18,18 @@ async function getWeatherData (cityName) {
 const form = document.querySelector('form');
 form.addEventListener('submit', (e) => {
         e.preventDefault();
-        form.elements[1].disabled = true;
-        getWeatherData(form.elements[0].value)
+        form.elements[3].disabled = true;
+        getWeatherData(form.elements[2].value)
             .then((data) => {
-                displayData(useData(data))
-                form.elements[1].disabled = false;})
+                displayTables(useData(data),form.elements[2].value);
+                form.elements[3].disabled = false;})
             .catch((err) => {
-                form.elements[1].disabled = false;});
+                document.getElementById("error-message").innerHTML="Location not found!";
+                form.elements[3].disabled = false;});
     })
 
 const hour = (data,timezone) => {
     const newDate = new Date((data.dt - 7200 + timezone) * 1000);
-    console.log(newDate);
     const date = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()}`;
     const time = `${new Date((data.dt - 7200 + timezone) * 1000).getHours()}:00`;
     const temp = data.main.temp;
@@ -63,13 +63,11 @@ const day = (data) => {
 const useData = (data) => {
     // console.log(data);
     // console.log(hour(data.list[0],data.city.timezone).time);
-    console.log(data);
     const days = [];
     let dayCount = 0;
     days[dayCount] = day(data);
     days[dayCount].addHourInfo(hour(data.list[0],data.city.timezone));
     let hourCount = 1;
-    console.log(data.list[hourCount]);
     while(true){
         if(data.list[hourCount] == undefined || new Date((data.list[hourCount].dt - 7200 + data.city.timezone) * 1000).getHours() <
            new Date((data.list[hourCount-1].dt - 7200 + data.city.timezone) * 1000).getHours()){
@@ -87,8 +85,25 @@ const useData = (data) => {
     return days;
 }
 
-const displayData = (days) => {
+const displayTables = (days,city) => {
     const container = document.querySelector("#container");
+    container.innerHTML = '';
+    
+    const title = document.createElement("h1");
+    title.textContent = `Weather in ${city[0].toUpperCase() + city.substr(1)}`;
+    container.appendChild(title);
+
+    const form = document.querySelector("form");
+
+    const toggleButton = document.createElement("button");
+    toggleButton.textContent = '←';
+    toggleButton.addEventListener("click", () => {
+        container.innerHTML = '';
+        form.classList.remove("hidden");
+    });
+    container.appendChild(toggleButton);
+    form.classList.add("hidden");
+
     for (const day of days) {
         const dayContainer = document.createElement("div");
         dayContainer.classList.add("day-container");
