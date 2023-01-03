@@ -1,8 +1,8 @@
-async function getWeatherData (cityName) {
+async function getWeatherData (cityName,unit) {
     const key = '701331af26f890a05517e29d2a156378';
     //getting data from the openweathermap API
     try {
-        const url1 = `https://api.openweathermap.org/data/2.5/forecast?units=metric&q=${cityName}&APPID=${key}`;
+        const url1 = `https://api.openweathermap.org/data/2.5/forecast?units=${unit==='C' ? 'metric' : 'imperial'}&q=${cityName}&APPID=${key}`;
         const data = await fetch(url1)
             .then(function(response) {
                     return response.json();
@@ -19,9 +19,14 @@ const form = document.querySelector('form');
 form.addEventListener('submit', (e) => {
         e.preventDefault();
         form.elements[3].disabled = true;
-        getWeatherData(form.elements[2].value)
+        let unit;
+        if(form.elements[0].checked)
+            unit = 'C';
+        else
+            unit = 'F';
+        getWeatherData(form.elements[2].value,unit)
             .then((data) => {
-                displayTables(useData(data),form.elements[2].value);
+                displayTables(useData(data),form.elements[2].value,unit);
                 form.elements[3].disabled = false;})
             .catch((err) => {
                 document.getElementById("error-message").innerHTML="Location not found!";
@@ -85,7 +90,7 @@ const useData = (data) => {
     return days;
 }
 
-const displayTables = (days,city) => {
+const displayTables = (days,city,unit) => {
     const container = document.querySelector("#container");
     container.innerHTML = '';
     
@@ -147,7 +152,7 @@ const displayTables = (days,city) => {
         tempRow.innerHTML = `<th>Temperature</th>`;
         for (const hour of day.hourlyInfo) {
             const tempCell = document.createElement("td");
-            tempCell.textContent = `${Math.round(hour.temp)}°C`;
+            tempCell.textContent = `${Math.round(hour.temp)}°${unit}`;
             tempRow.appendChild(tempCell);
         }
         table.appendChild(tempRow);
@@ -156,7 +161,7 @@ const displayTables = (days,city) => {
         feelsLikeRow.innerHTML = `<th>Feels like</th>`;
         for (const hour of day.hourlyInfo) {
             const feelsLikeCell = document.createElement("td");
-            feelsLikeCell.textContent = `${Math.round(hour.feelsLike)}°C`;
+            feelsLikeCell.textContent = `${Math.round(hour.feelsLike)}°${unit}`;
             feelsLikeRow.appendChild(feelsLikeCell);
         }
         table.appendChild(feelsLikeRow);
