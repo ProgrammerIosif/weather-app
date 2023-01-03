@@ -6,6 +6,7 @@ body{
     font-family: sans-serif;
     height: 100vh;
     margin: 0;
+    position: relative;
 }
 
 h1{
@@ -14,6 +15,7 @@ h1{
 }
 
 #container {
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -48,7 +50,7 @@ h1{
 
 .hourly-table th,
 .hourly-table td {
-  padding: 15px 20px;
+  padding: 2vh 1vw;
   text-align: left;
   border-bottom: 1px solid #111;
 }
@@ -87,8 +89,12 @@ button:hover{
     border: 1px solid black;
 }
 form {
-  height: 40vh;
-  margin: 25vh 0 35vh 0;
+  /* centering */
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+
+  height: 300px;
   display: flex;
   padding: 50px;
   flex-direction: column;
@@ -130,15 +136,12 @@ form input[type="submit"] {
   display: flex;
 }
 
-form input[type="submit"]:hover {
+form input[type="submit"]:hover{
+  background-color: #666; 
   background-color: #999;
   color: black;
 }
 
 form input[type="radio"] {
   margin: 0 10px;
-}
-
-form label {
-  font-size: 1em;
 }
