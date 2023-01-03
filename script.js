@@ -7,9 +7,11 @@ async function getWeatherData (cityName) {
             .then(function(response) {
                     return response.json();
                 }).then(function(response) {return response;});
+        if(data.cod === '404')
+            throw new Error('City not found');
         return data;
     } catch (error) {
-        return 'error';
+        return error;
     }
 }
 
@@ -20,12 +22,15 @@ form.addEventListener('submit', (e) => {
         getWeatherData(form.elements[0].value)
             .then((data) => {
                 displayData(useData(data))
+                form.elements[1].disabled = false;})
+            .catch((err) => {
                 form.elements[1].disabled = false;});
     })
 
 const hour = (data,timezone) => {
     const newDate = new Date((data.dt - 7200 + timezone) * 1000);
-    const date = `${newDate.getDay() + 1}.${newDate.getMonth() + 1}.${newDate.getFullYear()}`;
+    console.log(newDate);
+    const date = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()}`;
     const time = `${new Date((data.dt - 7200 + timezone) * 1000).getHours()}:00`;
     const temp = data.main.temp;
     const feelsLike = data.main.feels_like;
@@ -34,7 +39,8 @@ const hour = (data,timezone) => {
     const cloudiness = data.clouds.all;
     const windSpeed = data.wind.speed;
     const windGust = data.wind.gust;
-    return {date,time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust};
+    const iconCode = data.weather[0].icon;
+    return {date,time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust,iconCode};
 }
 
 const day = (data) => {
@@ -57,13 +63,15 @@ const day = (data) => {
 const useData = (data) => {
     // console.log(data);
     // console.log(hour(data.list[0],data.city.timezone).time);
+    console.log(data);
     const days = [];
     let dayCount = 0;
     days[dayCount] = day(data);
     days[dayCount].addHourInfo(hour(data.list[0],data.city.timezone));
     let hourCount = 1;
+    console.log(data.list[hourCount]);
     while(true){
-        if(new Date((data.list[hourCount].dt - 7200 + data.city.timezone) * 1000).getHours() <
+        if(data.list[hourCount] == undefined || new Date((data.list[hourCount].dt - 7200 + data.city.timezone) * 1000).getHours() <
            new Date((data.list[hourCount-1].dt - 7200 + data.city.timezone) * 1000).getHours()){
                 if(dayCount == 4)
                     break;
@@ -81,15 +89,9 @@ const useData = (data) => {
 
 const displayData = (days) => {
     const container = document.querySelector("#container");
-    container.innerHTML = '';
-
     for (const day of days) {
         const dayContainer = document.createElement("div");
         dayContainer.classList.add("day-container");
-
-        const dayLabel = document.createElement("div");
-        dayLabel.classList.add("day-label");
-        dayLabel.textContent = day.hourlyInfo[0].date;
         
         const dayInfo = document.createElement("div");
         dayInfo.classList.add("day-info");
@@ -105,16 +107,27 @@ const displayData = (days) => {
         dayInfo.appendChild(sunsetLabel);
 
         const table = document.createElement("table");
+        const iconRow = document.createElement("tr");
+        iconRow.innerHTML = `<td></td>`;
+        for (const hour of day.hourlyInfo) {
+            const iconCell = document.createElement("td");
+            const iconImg = document.createElement("img");
+            iconImg.src = `http://openweathermap.org/img/wn/${hour.iconCode}@2x.png`;
+            iconCell.appendChild(iconImg);
+            iconRow.appendChild(iconCell);
+        }
+        table.appendChild(iconRow)
+
         table.classList.add("hourly-table");
         const headerRow = document.createElement("tr");
-        headerRow.innerHTML = `<th></th>`;
+        headerRow.innerHTML = `<th style="text-align:center">${day.hourlyInfo[0].date}</th>`;
         for (const hour of day.hourlyInfo) {
             const hourCell = document.createElement("th");
             hourCell.textContent = hour.time;
             headerRow.appendChild(hourCell);
         }
         table.appendChild(headerRow);
-
+        
         const tempRow = document.createElement("tr");
         tempRow.innerHTML = `<th>Temperature</th>`;
         for (const hour of day.hourlyInfo) {
@@ -164,7 +177,7 @@ const displayData = (days) => {
         windSpeedRow.innerHTML = `<th>Wind speed</th>`;
         for (const hour of day.hourlyInfo) {
             const windSpeedCell = document.createElement("td");
-            windSpeedCell.textContent = `${Math.round(hour.windSpeed*3.6)}%`;
+            windSpeedCell.textContent = `${Math.round(hour.windSpeed*3.6)} km/h`;
             windSpeedRow.appendChild(windSpeedCell);
         }
         table.appendChild(windSpeedRow);
@@ -173,12 +186,11 @@ const displayData = (days) => {
         windGustRow.innerHTML = `<th>Wind gust</th>`;
         for (const hour of day.hourlyInfo) {
             const windGustCell = document.createElement("td");
-            windGustCell.textContent = `${Math.round(hour.windGust*3.6)}%`;
+            windGustCell.textContent = `${Math.round(hour.windGust*3.6)} km/h`;
             windGustRow.appendChild(windGustCell);
         }
         table.appendChild(windGustRow);
 
-        dayContainer.appendChild(dayLabel);
         dayContainer.appendChild(table);
         dayContainer.appendChild(dayInfo);
 
