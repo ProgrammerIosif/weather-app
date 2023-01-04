@@ -1,3 +1,58 @@
+const dictionary = {
+    en:{
+        title: 'Weather',
+        in: 'in',
+        form:{
+            q1: 'Language:',
+            a1: 'English',
+            a2: 'Romanian',
+            q2: 'Temperature in:',
+            a1: 'Celcius',
+            a2: 'Fahrenheit',
+            q3: 'Search a location:',
+            err: 'Location not found!',
+            submit: 'Enter'
+        },
+        table:{
+            temp: 'Temperature',
+            feel: 'Feels like',
+            rain: 'Rain',
+            cor: 'Chance of rain',
+            cloud: 'Cloudiness',
+            wSpeed: 'Wind Speed',
+            wGust: 'Wind Gust',
+            sunrise: 'Sunrise',
+            sunset: 'Sunset'
+        }
+    },
+    ro:{
+        title: 'Vremea',
+        in: 'în',
+        form:{
+            q1: 'Limb',
+            a1: 'Engleză',
+            a2: 'Română',
+            q2: 'Temperatura în grade:',
+            a1: 'Celcius',
+            a2: 'Fahrenheit',
+            q3: 'Caută o locație:',
+            err: 'Loca ie inexistentă',
+            submit: 'Continuă'
+        },
+        table:{
+            temp: 'Temperatură',
+            feel: 'Resim ită',
+            rain: 'Cantități precipitații',
+            cor: 'Probabilitate precipitații',
+            cloud: 'Acoperite cu nori',
+            wSpeed: 'Viteza vântului',
+            wGust: 'Viteza la rafală',
+            sunrise: 'Răsărit',
+            sunset: 'Apus'
+        }
+    }
+}
+
 async function getWeatherData (cityName,unit) {
     const key = '701331af26f890a05517e29d2a156378';
     //getting data from the openweathermap API
@@ -24,9 +79,10 @@ form.addEventListener('submit', (e) => {
             unit = 'C';
         else
             unit = 'F';
+        language = 'english';
         getWeatherData(form.elements[2].value,unit)
             .then((data) => {
-                displayTables(useData(data),form.elements[2].value,unit);
+                displayTables(useData(data),form.elements[2].value,unit,language);
                 form.elements[3].disabled = false;})
             .catch((err) => {
                 document.getElementById("error-message").innerHTML="Location not found!";
