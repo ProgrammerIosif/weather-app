@@ -94,7 +94,7 @@ form {
   top: 50%;
   transform: translate(0, -50%);
 
-  height: 300px;
+  height: 400px;
   display: flex;
   padding: 50px;
   flex-direction: column;

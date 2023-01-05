@@ -1,55 +1,27 @@
 const dictionary = {
     en:{
-        title: 'Weather',
-        in: 'in',
-        form:{
-            q1: 'Language:',
-            a1: 'English',
-            a2: 'Romanian',
-            q2: 'Temperature in:',
-            a1: 'Celcius',
-            a2: 'Fahrenheit',
-            q3: 'Search a location:',
-            err: 'Location not found!',
-            submit: 'Enter'
-        },
-        table:{
-            temp: 'Temperature',
-            feel: 'Feels like',
-            rain: 'Rain',
-            cor: 'Chance of rain',
-            cloud: 'Cloudiness',
-            wSpeed: 'Wind Speed',
-            wGust: 'Wind Gust',
-            sunrise: 'Sunrise',
-            sunset: 'Sunset'
-        }
+        title: 'Weather in',
+        temp: 'Temperature',
+        feel: 'Feels like',
+        rain: 'Rain',
+        cor: 'Chance of rain',
+        cloud: 'Cloudiness',
+        wSpeed: 'Wind Speed',
+        wGust: 'Wind Gust',
+        sunrise: 'Sunrise',
+        sunset: 'Sunset'
     },
     ro:{
-        title: 'Vremea',
-        in: 'în',
-        form:{
-            q1: 'Limb',
-            a1: 'Engleză',
-            a2: 'Română',
-            q2: 'Temperatura în grade:',
-            a1: 'Celcius',
-            a2: 'Fahrenheit',
-            q3: 'Caută o locație:',
-            err: 'Loca ie inexistentă',
-            submit: 'Continuă'
-        },
-        table:{
-            temp: 'Temperatură',
-            feel: 'Resim ită',
-            rain: 'Cantități precipitații',
-            cor: 'Probabilitate precipitații',
-            cloud: 'Acoperite cu nori',
-            wSpeed: 'Viteza vântului',
-            wGust: 'Viteza la rafală',
-            sunrise: 'Răsărit',
-            sunset: 'Apus'
-        }
+        title: 'Vremea în',
+        temp: 'Temperatură',
+        feel: 'Resimțită',
+        rain: 'Cantități precipitații',
+        cor: 'Probabilitate precipitații',
+        cloud: 'Acoperire cu nori',
+        wSpeed: 'Viteza vântului',
+        wGust: 'Viteza la rafală',
+        sunrise: 'Răsărit',
+        sunset: 'Apus'
     }
 }
 
@@ -73,20 +45,24 @@ async function getWeatherData (cityName,unit) {
 const form = document.querySelector('form');
 form.addEventListener('submit', (e) => {
         e.preventDefault();
-        form.elements[3].disabled = true;
+        form.elements[5].disabled = true;
         let unit;
-        if(form.elements[0].checked)
+        if(form.elements[2].checked)
             unit = 'C';
         else
             unit = 'F';
-        language = 'english';
-        getWeatherData(form.elements[2].value,unit)
+        let lang;
+        if(form.elements[0].checked)
+            lang = 'en';
+        else 
+            lang = 'ro';
+        getWeatherData(form.elements[4].value,unit)
             .then((data) => {
-                displayTables(useData(data),form.elements[2].value,unit,language);
-                form.elements[3].disabled = false;})
+                displayTables(useData(data),form.elements[4].value,unit,lang);
+                form.elements[5].disabled = false;})
             .catch((err) => {
                 document.getElementById("error-message").innerHTML="Location not found!";
-                form.elements[3].disabled = false;});
+                form.elements[5].disabled = false;});
     })
 
 const hour = (data,timezone) => {
@@ -146,12 +122,12 @@ const useData = (data) => {
     return days;
 }
 
-const displayTables = (days,city,unit) => {
+const displayTables = (days,city,unit,lang) => {
     const container = document.querySelector("#container");
     container.innerHTML = '';
     
     const title = document.createElement("h1");
-    title.textContent = `Weather in ${city[0].toUpperCase() + city.substr(1)}`;
+    title.textContent = `${dictionary[lang].title} ${city[0].toUpperCase() + city.substr(1)}`;
     container.appendChild(title);
 
     const form = document.querySelector("form");
@@ -174,12 +150,12 @@ const displayTables = (days,city,unit) => {
 
         const sunriseLabel = document.createElement("div");
         sunriseLabel.classList.add("sunrise-label");
-        sunriseLabel.textContent = `Sunrise: ${day.sunrise}`;
+        sunriseLabel.textContent = `${dictionary[lang].sunrise}: ${day.sunrise}`;
         dayInfo.appendChild(sunriseLabel);
 
         const sunsetLabel = document.createElement("div");
         sunsetLabel.classList.add("sunset-label");
-        sunsetLabel.textContent = `Sunset: ${day.sunset}`;
+        sunsetLabel.textContent = `${dictionary[lang].sunset}: ${day.sunset}`;
         dayInfo.appendChild(sunsetLabel);
 
         const table = document.createElement("table");
@@ -205,7 +181,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(headerRow);
         
         const tempRow = document.createElement("tr");
-        tempRow.innerHTML = `<th>Temperature</th>`;
+        tempRow.innerHTML = `<th>${dictionary[lang].temp}</th>`;
         for (const hour of day.hourlyInfo) {
             const tempCell = document.createElement("td");
             tempCell.textContent = `${Math.round(hour.temp)}°${unit}`;
@@ -214,7 +190,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(tempRow);
 
         const feelsLikeRow = document.createElement("tr");
-        feelsLikeRow.innerHTML = `<th>Feels like</th>`;
+        feelsLikeRow.innerHTML = `<th>${dictionary[lang].feel}</th>`;
         for (const hour of day.hourlyInfo) {
             const feelsLikeCell = document.createElement("td");
             feelsLikeCell.textContent = `${Math.round(hour.feelsLike)}°${unit}`;
@@ -223,7 +199,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(feelsLikeRow);
 
         const rainRow = document.createElement("tr");
-        rainRow.innerHTML = `<th>Rain</th>`;
+        rainRow.innerHTML = `<th>${dictionary[lang].rain}</th>`;
         for (const hour of day.hourlyInfo) {
             const rainCell = document.createElement("td");
             rainCell.textContent = `${hour.rain} mm`;
@@ -232,7 +208,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(rainRow);
 
         const popRow = document.createElement("tr");
-        popRow.innerHTML = `<th>Chance of rain</th>`;
+        popRow.innerHTML = `<th>${dictionary[lang].cor}</th>`;
         for (const hour of day.hourlyInfo) {
             const popCell = document.createElement("td");
             popCell.textContent = `${Math.round(hour.pop*100)}%`;
@@ -241,7 +217,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(popRow);
 
         const cloudinessRow = document.createElement("tr");
-        cloudinessRow.innerHTML = `<th>Cloudiness</th>`;
+        cloudinessRow.innerHTML = `<th>${dictionary[lang].cloud}</th>`;
         for (const hour of day.hourlyInfo) {
             const cloudinessCell = document.createElement("td");
             cloudinessCell.textContent = `${hour.cloudiness}%`;
@@ -250,7 +226,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(cloudinessRow);
 
         const windSpeedRow = document.createElement("tr");
-        windSpeedRow.innerHTML = `<th>Wind speed</th>`;
+        windSpeedRow.innerHTML = `<th>${dictionary[lang].wSpeed}</th>`;
         for (const hour of day.hourlyInfo) {
             const windSpeedCell = document.createElement("td");
             windSpeedCell.textContent = `${Math.round(hour.windSpeed*3.6)} km/h`;
@@ -259,7 +235,7 @@ const displayTables = (days,city,unit) => {
         table.appendChild(windSpeedRow);
 
         const windGustRow = document.createElement("tr");
-        windGustRow.innerHTML = `<th>Wind gust</th>`;
+        windGustRow.innerHTML = `<th>${dictionary[lang].wGust}</th>`;
         for (const hour of day.hourlyInfo) {
             const windGustCell = document.createElement("td");
             windGustCell.textContent = `${Math.round(hour.windGust*3.6)} km/h`;
