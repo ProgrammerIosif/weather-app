@@ -144,3 +144,22 @@ form input[type="submit"]:hover{
 form input[type="radio"] {
   margin: 0 10px;
 }
+
+.white{
+    background-color: white;
+}
+.blue{
+    background-color: lightblue;
+}
+.green{
+    background-color: lightgreen;
+}
+.yellow{
+    background-color: yellow;
+}
+.orange{
+    background-color: orange;
+}
+.red{
+    background-color: red;
+}

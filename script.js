@@ -184,7 +184,29 @@ const displayTables = (days,city,unit,lang) => {
         tempRow.innerHTML = `<th>${dictionary[lang].temp}</th>`;
         for (const hour of day.hourlyInfo) {
             const tempCell = document.createElement("td");
-            tempCell.textContent = `${Math.round(hour.temp)}°${unit}`;
+            let temp = Math.round(hour.temp);
+            tempCell.textContent = `${temp}°${unit}`;
+            if(unit == 'F')
+                temp = Math.round((temp-32)/1.8);
+            switch (true) {
+                case temp == 0:
+                    tempCell.classList.add("white");
+                    break;
+                case temp < 0:
+                    tempCell.classList.add("blue");
+                    break;
+                case temp > 0 && temp <= 10:
+                    tempCell.classList.add("green");
+                    break;
+                case temp > 10 && temp <= 20:
+                    tempCell.classList.add("yellow");
+                    break;
+                case temp > 20 && temp <= 30:
+                    tempCell.classList.add("orange");
+                    break;
+                case temp > 30:
+                    tempCell.classList.add("red");
+            }
             tempRow.appendChild(tempCell);
         }
         table.appendChild(tempRow);
@@ -193,7 +215,29 @@ const displayTables = (days,city,unit,lang) => {
         feelsLikeRow.innerHTML = `<th>${dictionary[lang].feel}</th>`;
         for (const hour of day.hourlyInfo) {
             const feelsLikeCell = document.createElement("td");
-            feelsLikeCell.textContent = `${Math.round(hour.feelsLike)}°${unit}`;
+            let temp = Math.round(hour.feelsLike);
+            feelsLikeCell.textContent = `${temp}°${unit}`;
+            if(unit == 'F')
+                temp = Math.round((temp-32)/1.8);
+            switch (true) {
+                case temp == 0:
+                    feelsLikeCell.classList.add("white");
+                    break;
+                case temp < 0:
+                    feelsLikeCell.classList.add("blue");
+                    break;
+                case temp > 0 && temp <= 10:
+                    feelsLikeCell.classList.add("green");
+                    break;
+                case temp > 10 && temp <= 20:
+                    feelsLikeCell.classList.add("yellow");
+                    break;
+                case temp > 20 && temp <= 30:
+                    feelsLikeCell.classList.add("orange");
+                    break;
+                case temp > 30:
+                    feelsLikeCell.classList.add("red");
+            }
             feelsLikeRow.appendChild(feelsLikeCell);
         }
         table.appendChild(feelsLikeRow);
