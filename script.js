@@ -9,7 +9,16 @@ const dictionary = {
         wSpeed: 'Wind Speed',
         wGust: 'Wind Gust',
         sunrise: 'Sunrise',
-        sunset: 'Sunset'
+        sunset: 'Sunset',
+        day:[
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday'
+        ]
     },
     ro:{
         title: 'Vremea în',
@@ -21,7 +30,16 @@ const dictionary = {
         wSpeed: 'Viteza vântului',
         wGust: 'Viteza la rafală',
         sunrise: 'Răsărit',
-        sunset: 'Apus'
+        sunset: 'Apus',
+        day:[
+            'Duminică',
+            'Luni',
+            'Marți',
+            'Miercuri',
+            'Joi',
+            'Vineri',
+            'Sambătă'
+        ]
     }
 }
 
@@ -67,6 +85,7 @@ form.addEventListener('submit', (e) => {
 
 const hour = (data,timezone) => {
     const newDate = new Date((data.dt - 7200 + timezone) * 1000);
+    const dayName = newDate.getDay();
     const date = `${newDate.getDate()}.${newDate.getMonth() + 1}.${newDate.getFullYear()}`;
     const time = `${new Date((data.dt - 7200 + timezone) * 1000).getHours()}:00`;
     const temp = data.main.temp;
@@ -77,7 +96,7 @@ const hour = (data,timezone) => {
     const windSpeed = data.wind.speed;
     const windGust = data.wind.gust;
     const iconCode = data.weather[0].icon;
-    return {date,time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust,iconCode};
+    return {date,dayName,time,temp,feelsLike,rain,pop,cloudiness,windSpeed,windGust,iconCode};
 }
 
 const day = (data) => {
@@ -160,7 +179,7 @@ const displayTables = (days,city,unit,lang) => {
 
         const table = document.createElement("table");
         const iconRow = document.createElement("tr");
-        iconRow.innerHTML = `<td></td>`;
+        iconRow.innerHTML = `<td style="text-align:center;font-weight:bold;font-size:1.2rem">${dictionary[lang].day[day.hourlyInfo[0].dayName]}</td>`;
         for (const hour of day.hourlyInfo) {
             const iconCell = document.createElement("td");
             const iconImg = document.createElement("img");
