@@ -76,6 +76,7 @@ form.addEventListener('submit', (e) => {
             lang = 'ro';
         getWeatherData(form.elements[4].value,unit)
             .then((data) => {
+                document.getElementById("error-message").innerHTML="";
                 displayTables(useData(data),form.elements[4].value,unit,lang);
                 form.elements[5].disabled = false;})
             .catch((err) => {
