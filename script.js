@@ -59,7 +59,7 @@ async function getWeatherData (cityName,unit) {
         return error;
     }
 }
-fd
+
 const form = document.querySelector('form');
 form.addEventListener('submit', (e) => {
         e.preventDefault();
