@@ -46,8 +46,10 @@ export default function Home() {
     getWeatherData(city,unit)
       .then((data) => {
         sessionStorage.setItem('data',JSON.stringify(data))
+        const settings = {unit:unit, lang:lang, city:city}
+        sessionStorage.setItem('settings', JSON.stringify(settings));
         form.elements[5].disabled = false;
-        router.push("/" + city);
+        router.push("/" + data.city.name);
         })
       .catch((err) => {
         form.elements[5].disabled = false;});
