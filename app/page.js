@@ -9,6 +9,8 @@ export default function Home() {
   const router = useRouter();
   const [route, setRoute] = useState();
 
+  const [formError, setFormError] = useState();
+
   async function getWeatherData (cityName,unit) {
     const key = '701331af26f890a05517e29d2a156378';
     //getting data from the openweathermap API
@@ -18,8 +20,10 @@ export default function Home() {
             .then(function(response) {
                     return response.json();
                 }).then(function(response) {return response;});
-        if(data.cod === '404')
-            throw new Error('City not found');
+        if(data.cod === '404'){
+          setFormError(true);
+          throw new Error('City not found');
+        }
         return data;
     } catch (error) {
         return error;
@@ -73,8 +77,8 @@ export default function Home() {
             </div>
             <div className="form-control">
               <label className="label cursor-pointer">
-                <input type="radio" name="language" className="radio"  />
-                <span className="label-text text-2xl">Romana</span> 
+                <input type="radio" name="language" className="radio"  required/>
+                <span className="label-text text-2xl">Română</span> 
               </label>
             </div>
 
@@ -82,7 +86,7 @@ export default function Home() {
             <p className=' text-2xl'>TEMPERATURE IN</p>
             <div className="form-control">
               <label className="label cursor-pointer">
-                <input type="radio" name="unit" className="radio"  />
+                <input type="radio" name="unit" className="radio" required />
                 <span className="label-text text-2xl">Celcius</span> 
               </label>
             </div>
@@ -99,9 +103,10 @@ export default function Home() {
                 <span className="label-text text-2xl">LOCATION</span>
               </label>
               <div className='flex gap-4'>
-                <input type="text" placeholder="" className="input input-bordered w-full max-w-xs bg-neutral" />
+                <input type="text" placeholder="" className="input input-bordered w-full max-w-xs bg-neutral" required/>
                 <button className="btn btn-outline">ENTER</button>
               </div>
+              <p>{formError ? 'ERROR: Location not found!' : ''}</p>
             </div>
 
           </form>

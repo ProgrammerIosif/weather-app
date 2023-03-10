@@ -1,9 +1,12 @@
 'use client';
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 
 const dictionary = {
     en:{
+        hour: 'Hour',
         title: 'Weather in',
         temp: 'Temperature',
         feel: 'Feels like',
@@ -25,6 +28,7 @@ const dictionary = {
         ]
     },
     ro:{
+        hour: 'Oră',
         title: 'Vremea în',
         temp: 'Temperatură',
         feel: 'Resimțită',
@@ -81,8 +85,6 @@ const day = (data) => {
 }
 
 const useData = (data) => {
-  // console.log(data);
-  // console.log(hour(data.list[0],data.city.timezone).time);
   const days = [];
   let dayCount = 0;
   days[dayCount] = day(data);
@@ -106,28 +108,33 @@ const useData = (data) => {
 }
 
 export default function City() {
+  const router = useRouter();
+  const [route, setRoute] = useState();
+  if(sessionStorage.getItem('data') === null) {
+    router.push("/");
+    return;
+  }
   const data = JSON.parse(sessionStorage.getItem('data'));
   const {unit,lang,city} = JSON.parse(sessionStorage.getItem('settings'));
   const days = useData(data);
-  console.log(days);
   return (
     <>
       <h1 className="text-center text-5xl font-extrabold p-10">{dictionary[lang].title} {city[0].toUpperCase() + city.substr(1)}</h1>
       <div className="lg:flex lg:items-center lg:flex-col">
       {days.map((day) => {
         return( 
-          <div className="border border-neutral-content rounded-2xl my-10 mx-2 p-4 pl-0 bg-neutral w-max">
-            <table className="table text-xl">
-              <tr className=" border-b border-neutral-content">
-                <td className="font-bold border-r border-neutral-content">{dictionary[lang].day[day.hourlyInfo[0].dayName]}</td>
+          <div className="border-2 border-neutral-content rounded-2xl my-10 mx-2 bg-neutral w-max text-xl">
+            <table className="sm:max-table-compact sm:table border-b min-w-[500px]">
+              <tr className="">
+                <td className="font-bold border-r border-neutral-content">{dictionary[lang].day[day.hourlyInfo[0].dayName]}<br></br>{day.hourlyInfo[0].date}</td>
                 {day.hourlyInfo.map((hour) => {
                     return (
                       <td className="p-0"><img src={`http://openweathermap.org/img/wn/${hour.iconCode}@2x.png`} alt="" /></td>
                     )
                   })}
               </tr>
-              <tr className="">
-                <td className="font-bold border-r border-neutral-content">{day.hourlyInfo[0].date}</td>
+              <tr className="border-y border-neutral-content">
+                <td className="font-bold border-r border-neutral-content">{dictionary[lang].hour}</td>
                 {day.hourlyInfo.map((hour) => {
                   return (
                     <th>{hour.time}</th>
@@ -248,11 +255,21 @@ export default function City() {
                 })}
               </tr>
             </table>
+            <div className="flex justify-around sm:py-4">
+              <div>
+                <span className="font-bold">{dictionary[lang].sunrise} : </span>
+                <span>{days[0].sunrise}</span>
+              </div>
+              <div>
+                <span className="font-bold">{dictionary[lang].sunset} : </span>
+                <span>{days[0].sunset}</span>
+              </div>
+            </div>
           </div>
         )})}
       </div>
       <Link href="/">
-        <button className="btn btn-circle btn-outline float-left fixed bottom-12 left-14 h-16 w-16 text-4xl pb-1">
+        <button className="btn btn-circle btn-outline float-left fixed bottom-12 left-14 h-16 w-16 text-4xl pb-1 border-2">
             ←
         </button>
       </Link>
